@@ -44,7 +44,7 @@ $(EXEC): $(OBJS)
 
 depend: .depend
 
-.depend: $(SRCS)
+.depend: $(SRCSC) $(SRCSCC)
 	$(RM) ./.depend
 	$(CC) $(CPPFLAGS) -MM $^>>./.depend;
 
