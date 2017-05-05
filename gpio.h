@@ -1,5 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
+extern "C" {
+#include "bcm_lib.h"
+}
 
 #pragma once
 

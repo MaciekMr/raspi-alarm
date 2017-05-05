@@ -3,15 +3,13 @@
 
 
 //#include "pin.h"
-extern "C" {
-#include "bcm_lib.h"
-}
 #include "gpio.h"
 
 CGPIO::CGPIO(){
 	//p_bcm = NULL;
 	//p_bcm = new bcm2835;
 	printf("initialize bcm\n");
+	p_bcm.mem_fd = NULL;		
 	map_peripheral(& p_bcm);
 	
 	

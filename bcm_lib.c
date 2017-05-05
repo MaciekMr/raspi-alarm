@@ -13,7 +13,7 @@
 struct bcm2835_peripherial gpio = {GPIO_BASE};
 
 int map_peripheral (bcm2835 * p){
-	
+
 	//Open /dev/mem
 	printf("begin map peri\n");
 	
@@ -28,7 +28,7 @@ int map_peripheral (bcm2835 * p){
 	
 	if(p->map == MAP_FAILED){
 	
-		printf("error %d \n", p->map);
+		printf("error %p \n", p->map);
 		perror("mmap error");
 		return -1;
 	}
