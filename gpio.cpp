@@ -3,7 +3,9 @@
 
 
 //#include "pin.h"
+extern "C" {
 #include "bcm_lib.h"
+}
 #include "gpio.h"
 
 CGPIO::CGPIO(){
