@@ -24,8 +24,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    pin.cpp \
+    gpio.cpp \
+    bcm_lib.c
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    pin.h \
+    macros.h \
+    gpio.h \
+    bcm_lib.h
 
 FORMS    += mainwindow.ui
