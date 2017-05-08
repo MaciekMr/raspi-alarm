@@ -10,7 +10,7 @@ extern "C" {
 class CGPIO{
 
 private:
-	bcm2835 p_bcm = {GPIO_BASE};
+	bcm2835 p_bcm = {GPIO_BASE,0,NULL,NULL};
 
 public:
 	CGPIO();

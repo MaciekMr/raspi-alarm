@@ -10,7 +10,7 @@
 #include "bcm_lib.h"
 #include "macros.h"
 
-struct bcm2835_peripherial gpio = {GPIO_BASE};
+struct bcm2835_peripherial gpio = {GPIO_BASE,0,NULL,NULL};
 
 int map_peripheral (bcm2835 * p){
 

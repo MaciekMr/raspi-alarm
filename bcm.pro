@@ -27,12 +27,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     pin.cpp \
     gpio.cpp \
-    bcm_lib.c
+    bcm_lib.c \
+    server.cpp
 
 HEADERS  += mainwindow.h \
     pin.h \
     macros.h \
     gpio.h \
-    bcm_lib.h
+    bcm_lib.h \
+    server.h
 
 FORMS    += mainwindow.ui
