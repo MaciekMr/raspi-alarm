@@ -48,12 +48,12 @@ void CServer::openListener(int port_no){
     }
 }
 
-void CServer::initServer(){
+void CServer::initServerCTX(){
 
     OpenSSL_add_all_algorithms();  /* load & register all cryptos, etc. */
     SSL_load_error_strings();   /* load all error messages */
     p_method = TLSv1_2_server_method();  /* create new server-method instance */
-    p_ctx = SSL_CTX_new(method);   /* create new context from method */
+    p_ctx = SSL_CTX_new(p_method);   /* create new context from method */
     if ( p_ctx == NULL )
     {
         ERR_print_errors_fp(stderr);
@@ -111,11 +111,11 @@ void CServer::serveConnection(SSL *ssl){
     int sd, bytes;
     const char* HTMLecho="<html><body><pre>%s</pre></body></html>\n\n";
 
-    if ( SSL_accept(ssl) == FAIL )     /* do SSL-protocol accept */
+    if ( SSL_accept(ssl) == X509_LU_FAIL )     /* do SSL-protocol accept - X509_LU_FAIL */
         ERR_print_errors_fp(stderr);
     else
     {
-        ShowCerts(ssl);        /* get any certificates */
+        showCertificates(ssl);        /* get any certificates */
         bytes = SSL_read(ssl, buf, sizeof(buf)); /* get request */
         if ( bytes > 0 )
         {
