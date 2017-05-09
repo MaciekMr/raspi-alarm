@@ -47,3 +47,87 @@ void CServer::openListener(int port_no){
         abort();
     }
 }
+
+void CServer::initServer(){
+
+    OpenSSL_add_all_algorithms();  /* load & register all cryptos, etc. */
+    SSL_load_error_strings();   /* load all error messages */
+    p_method = TLSv1_2_server_method();  /* create new server-method instance */
+    p_ctx = SSL_CTX_new(method);   /* create new context from method */
+    if ( p_ctx == NULL )
+    {
+        ERR_print_errors_fp(stderr);
+        abort();
+    }
+}
+
+void CServer::loadCertificates(){
+
+    /* set the local certificate from CertFile */
+    if ( SSL_CTX_use_certificate_file(p_ctx, p_cert_file, SSL_FILETYPE_PEM) <= 0 )
+    {
+        ERR_print_errors_fp(stderr);
+        abort();
+    }
+    /* set the private key from KeyFile (may be the same as CertFile) */
+    if ( SSL_CTX_use_PrivateKey_file(p_ctx, p_key_file, SSL_FILETYPE_PEM) <= 0 )
+    {
+        ERR_print_errors_fp(stderr);
+        abort();
+    }
+    /* verify private key */
+    if ( !SSL_CTX_check_private_key(p_ctx) )
+    {
+        fprintf(stderr, "Private key does not match the public certificate\n");
+        abort();
+    }
+}
+
+void CServer::showCertificates(SSL *ssl){
+
+    X509 *cert;
+    char *line;
+
+    cert = SSL_get_peer_certificate(ssl); /* Get certificates (if available) */
+    if ( cert != NULL )
+    {
+        printf("Server certificates:\n");
+        line = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
+        printf("Subject: %s\n", line);
+        free(line);
+        line = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
+        printf("Issuer: %s\n", line);
+        free(line);
+        X509_free(cert);
+    }
+    else
+        printf("No certificates.\n");
+}
+
+void CServer::serveConnection(SSL *ssl){
+
+    char buf[1024];
+    char reply[1024];
+    int sd, bytes;
+    const char* HTMLecho="<html><body><pre>%s</pre></body></html>\n\n";
+
+    if ( SSL_accept(ssl) == FAIL )     /* do SSL-protocol accept */
+        ERR_print_errors_fp(stderr);
+    else
+    {
+        ShowCerts(ssl);        /* get any certificates */
+        bytes = SSL_read(ssl, buf, sizeof(buf)); /* get request */
+        if ( bytes > 0 )
+        {
+            buf[bytes] = 0;
+            printf("Client msg: \"%s\"\n", buf);
+            sprintf(reply, HTMLecho, buf);   /* construct reply */
+            SSL_write(ssl, reply, strlen(reply)); /* send reply */
+        }
+        else
+            ERR_print_errors_fp(stderr);
+    }
+    sd = SSL_get_fd(ssl);       /* get socket connection */
+    SSL_free(ssl);         /* release SSL state */
+    close(sd);          /* close connection */
+}

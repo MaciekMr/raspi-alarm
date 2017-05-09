@@ -31,6 +31,8 @@ private:
     int                 n_socket_descriptor;
     struct sockaddr_in  *p_sock_addr;
     int                 n_port_no;
+    char                *p_cert_file;
+    char                *p_key_file;
 
 public:
 
@@ -42,8 +44,8 @@ public:
       return(!getuid());
     }
 
-    void initServerCTX(void);
-    void loadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile);
+    void initServerCTX();
+    void loadCertificates();
     void showCertificates(SSL *ssl);
     void serveConnection(SSL *ssl);
 };

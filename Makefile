@@ -53,13 +53,15 @@ SOURCES       = main.cpp \
 		pin.cpp \
 		gpio.cpp \
 		bcm_lib.c \
-		server.cpp moc_mainwindow.cpp
+		server.cpp \
+		thread.cpp moc_mainwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		pin.o \
 		gpio.o \
 		bcm_lib.o \
 		server.o \
+		thread.o \
 		moc_mainwindow.o
 DIST          = /usr/lib64/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib64/qt5/mkspecs/common/unix.conf \
@@ -136,12 +138,14 @@ DIST          = /usr/lib64/qt5/mkspecs/features/spec_pre.prf \
 		macros.h \
 		gpio.h \
 		bcm_lib.h \
-		server.h main.cpp \
+		server.h \
+		thread.h main.cpp \
 		mainwindow.cpp \
 		pin.cpp \
 		gpio.cpp \
 		bcm_lib.c \
-		server.cpp
+		server.cpp \
+		thread.cpp
 QMAKE_TARGET  = bcm
 DESTDIR       = 
 TARGET        = bcm
@@ -316,8 +320,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h pin.h macros.h gpio.h bcm_lib.h server.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp pin.cpp gpio.cpp bcm_lib.c server.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.h pin.h macros.h gpio.h bcm_lib.h server.h thread.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp mainwindow.cpp pin.cpp gpio.cpp bcm_lib.c server.cpp thread.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 
 
@@ -393,6 +397,9 @@ bcm_lib.o: bcm_lib.c bcm_lib.h \
 
 server.o: server.cpp server.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o server.o server.cpp
+
+thread.o: thread.cpp thread.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o thread.o thread.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
