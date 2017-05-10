@@ -29,7 +29,8 @@ SOURCES += main.cpp\
     gpio.cpp \
     bcm_lib.c \
     server.cpp \
-    thread.cpp
+    thread.cpp \
+    thread_base.cpp
 
 HEADERS  += mainwindow.h \
     pin.h \
@@ -37,6 +38,7 @@ HEADERS  += mainwindow.h \
     gpio.h \
     bcm_lib.h \
     server.h \
-    thread.h
+    thread.h \
+    thread_base.h
 
 FORMS    += mainwindow.ui

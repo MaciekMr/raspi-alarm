@@ -14,7 +14,7 @@ class CThread {
 private:
     int         m_counter;
     thread_map  *p_threads;
-    pthread_t   *p_thread;
+    pthread_t   p_thread;
 public:
     CThread();
     ~CThread();
