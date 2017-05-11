@@ -15,16 +15,15 @@ int main(int argc, char *argv[])
     t5.addNewThread();
 
 	CGPIO gpio;
-    /*QApplication::setSetuidAllowed(true);
+    QApplication::setSetuidAllowed(true);
 	QApplication a(argc, argv);
     MainWindow w;
-    w.show();*/
-    int i=100000;
+    w.show();
+    int i=10;
     while(i){
-        sleep(10);
+        usleep(1000);
         printf("%d\n",i);
         i--;
     }
-    //return a.exec();
-    return 0;
+    return a.exec();
 }

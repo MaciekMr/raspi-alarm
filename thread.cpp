@@ -9,6 +9,8 @@ CThread::CThread(){
 
 CThread::~CThread(){
 
+    //wait until thread done
+
 }
 
 void * CThread::execute(){

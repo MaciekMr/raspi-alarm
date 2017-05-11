@@ -30,7 +30,11 @@ SOURCES += main.cpp\
     bcm_lib.c \
     server.cpp \
     thread_base.cpp \
-    thread.cpp
+    thread.cpp \
+    configpanel.cpp \
+    infopanel.cpp \
+    logframe.cpp \
+    logpanel.cpp
 
 HEADERS  += mainwindow.h \
     pin.h \
@@ -39,6 +43,12 @@ HEADERS  += mainwindow.h \
     bcm_lib.h \
     server.h \
     thread_base.h \
-    thread.h
+    thread.h \
+    configpannel.h \
+    ui_mainwindow.h \
+    logpanel.h \
+    logframe.h \
+    infopanel.h \
+    configpanel.h
 
 FORMS    += mainwindow.ui

@@ -12,7 +12,7 @@ typedef map<int, void *> thread_map;
 class CThreadBase {
 
 protected:
-    int         m_counter;
+    static int  m_counter;
     thread_map  *p_threads;
     pthread_t   p_thread;
 public:
