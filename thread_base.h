@@ -1,25 +1,25 @@
-#ifndef THREAD_BASE_H
-#define THREAD_BASE_H
+#ifndef THREAD_H
+#define THREAD_H
 
-#endif // THREAD_BASE_H
+#endif // THREAD_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <map>
-#include <list>
+#include<map>
 
 using namespace std;
 
-typedef map<int, void *> thread_ident;
-typedef list<thread_ident> thread_list;
+typedef map<int, void *> thread_map;
 
-class CThreadBase{
+class CThreadBase {
 
-private:
-
-
+protected:
+    int         m_counter;
+    thread_map  *p_threads;
+    pthread_t   p_thread;
 public:
     CThreadBase();
     ~CThreadBase();
-    void addThread(void *);
+    template<class T>  int addNewThread(T *);
+    int addNewThread();
+    virtual void *execute()=0;
+    static void *subRoutine(void *p_context);
 };
