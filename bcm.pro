@@ -44,7 +44,6 @@ HEADERS  += mainwindow.h \
     server.h \
     thread_base.h \
     thread.h \
-    configpannel.h \
     ui_mainwindow.h \
     logpanel.h \
     logframe.h \
