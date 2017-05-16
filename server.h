@@ -9,13 +9,14 @@
 #include <utility>
 #include <string>
 #include <list>
+#include "thread_base.h"
 
 using namespace std;
 
 typedef pair<string, int> t_connection;
 typedef list<t_connection *> t_links;
 
-class CServer {
+class CServer:protected CThreadBase {
 
 private:
     char                *p_destination;
@@ -48,4 +49,6 @@ public:
     void loadCertificates();
     void showCertificates(SSL *ssl);
     void serveConnection(SSL *ssl);
+
+    void *execute();
 };

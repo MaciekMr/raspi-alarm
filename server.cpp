@@ -131,3 +131,12 @@ void CServer::serveConnection(SSL *ssl){
     SSL_free(ssl);         /* release SSL state */
     close(sd);          /* close connection */
 }
+
+void * CServer::execute(){
+
+    //create a struct with all session parameters
+    //pass the connection to new thread
+    //keep thread running until connected
+
+    return 0;
+}

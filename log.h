@@ -10,13 +10,11 @@ typedef vector<string>  _logger;
 class Log{
 
 protected:
-	static _logger  m_logger;
+    static _logger  m_logger;
 
 private:
 	Log();
 	~Log();
 public:
-	static void logger(char *);
-	
-
+    static void logger(char * log);
 };

@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     configpanel.cpp \
     infopanel.cpp \
     logframe.cpp \
-    logpanel.cpp
+    logpanel.cpp \
+    log.cpp
 
 HEADERS  += mainwindow.h \
     pin.h \
@@ -48,6 +49,7 @@ HEADERS  += mainwindow.h \
     logpanel.h \
     logframe.h \
     infopanel.h \
-    configpanel.h
+    configpanel.h \
+    log.h
 
 FORMS    += mainwindow.ui
