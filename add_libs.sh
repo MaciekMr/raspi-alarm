@@ -1,0 +1,1 @@
+export SUBLIBS="-lssl -lcrypto"

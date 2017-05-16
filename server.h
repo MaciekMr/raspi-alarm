@@ -9,6 +9,7 @@
 #include <utility>
 #include <string>
 #include <list>
+#include "connection.h"
 #include "thread_base.h"
 
 using namespace std;
@@ -16,7 +17,7 @@ using namespace std;
 typedef pair<string, int> t_connection;
 typedef list<t_connection *> t_links;
 
-class CServer:protected CThreadBase {
+class CServer:protected CConnection, protected CThreadBase {
 
 private:
     char                *p_destination;
@@ -30,8 +31,6 @@ private:
     int                 server_no;
 
     int                 n_socket_descriptor;
-    struct sockaddr_in  *p_sock_addr;
-    int                 n_port_no;
     char                *p_cert_file;
     char                *p_key_file;
 

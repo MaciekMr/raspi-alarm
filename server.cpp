@@ -17,26 +17,26 @@
 
 CServer::CServer(){
 
-    p_sock_addr = NULL;
-    p_sock_addr = new sockaddr_in;
+    p_s_addr = NULL;
+    p_s_addr = new sockaddr_in;
 }
 
 
 CServer::~CServer(){
 
-    if(p_sock_addr)
-        delete(p_sock_addr);
+    if(p_s_addr)
+        delete(p_s_addr);
 }
 
 void CServer::openListener(int port_no){
 
-    n_port_no = port_no;
+    m_port_no = port_no;
     n_socket_descriptor = socket(PF_INET, SOCK_STREAM, 0);
-    memset(p_sock_addr, 0, sizeof(sockaddr_in));
-    p_sock_addr->sin_family = AF_INET;
-    p_sock_addr->sin_port = htons(n_port_no);
-    p_sock_addr->sin_addr.s_addr = INADDR_ANY;
-    if ( bind(n_socket_descriptor, (const sockaddr*) p_sock_addr, sizeof(sockaddr_in)) != 0 )
+    memset(p_s_addr, 0, sizeof(sockaddr_in));
+    p_s_addr->sin_family = AF_INET;
+    p_s_addr->sin_port = htons(m_port_no);
+    p_s_addr->sin_addr.s_addr = INADDR_ANY;
+    if ( bind(n_socket_descriptor, (const sockaddr*) p_s_addr, sizeof(sockaddr_in)) != 0 )
     {
         perror("can't bind port");
         abort();
@@ -103,6 +103,8 @@ void CServer::showCertificates(SSL *ssl){
     else
         printf("No certificates.\n");
 }
+
+
 
 void CServer::serveConnection(SSL *ssl){
 

@@ -60,7 +60,8 @@ SOURCES       = main.cpp \
 		infopanel.cpp \
 		logframe.cpp \
 		logpanel.cpp \
-		log.cpp moc_mainwindow.cpp
+		log.cpp \
+		connection.cpp moc_mainwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		pin.o \
@@ -74,6 +75,7 @@ OBJECTS       = main.o \
 		logframe.o \
 		logpanel.o \
 		log.o \
+		connection.o \
 		moc_mainwindow.o
 DIST          = /usr/lib64/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib64/qt5/mkspecs/common/unix.conf \
@@ -158,7 +160,8 @@ DIST          = /usr/lib64/qt5/mkspecs/features/spec_pre.prf \
 		logframe.h \
 		infopanel.h \
 		configpanel.h \
-		log.h main.cpp \
+		log.h \
+		connection.h main.cpp \
 		mainwindow.cpp \
 		pin.cpp \
 		gpio.cpp \
@@ -170,7 +173,8 @@ DIST          = /usr/lib64/qt5/mkspecs/features/spec_pre.prf \
 		infopanel.cpp \
 		logframe.cpp \
 		logpanel.cpp \
-		log.cpp
+		log.cpp \
+		connection.cpp
 QMAKE_TARGET  = bcm
 DESTDIR       = 
 TARGET        = bcm
@@ -345,8 +349,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h pin.h macros.h gpio.h bcm_lib.h server.h thread_base.h thread.h ui_mainwindow.h logpanel.h logframe.h infopanel.h configpanel.h log.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp pin.cpp gpio.cpp bcm_lib.c server.cpp thread_base.cpp thread.cpp configpanel.cpp infopanel.cpp logframe.cpp logpanel.cpp log.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.h pin.h macros.h gpio.h bcm_lib.h server.h thread_base.h thread.h ui_mainwindow.h logpanel.h logframe.h infopanel.h configpanel.h log.h connection.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp mainwindow.cpp pin.cpp gpio.cpp bcm_lib.c server.cpp thread_base.cpp thread.cpp configpanel.cpp infopanel.cpp logframe.cpp logpanel.cpp log.cpp connection.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 
 
@@ -430,7 +434,9 @@ bcm_lib.o: bcm_lib.c bcm_lib.h \
 		macros.h
 	$(CC) -c $(CFLAGS) $(INCPATH) -o bcm_lib.o bcm_lib.c
 
-server.o: server.cpp server.h
+server.o: server.cpp server.h \
+		connection.h \
+		thread_base.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o server.o server.cpp
 
 thread_base.o: thread_base.cpp thread_base.h
@@ -454,6 +460,9 @@ logpanel.o: logpanel.cpp logpanel.h
 
 log.o: log.cpp log.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o log.o log.cpp
+
+connection.o: connection.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o connection.o connection.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
