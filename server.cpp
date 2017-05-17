@@ -1,16 +1,7 @@
-#include <sys/socket.h>
-#include <resolv.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+
 #include <string.h>
 
-#include <openssl/bio.h>
-#include <openssl/ssl.h>
-#include <openssl/err.h>
-#include <openssl/pem.h>
-#include <openssl/x509.h>
-#include <openssl/x509_vfy.h>
+
 
 #include "server.h"
 
@@ -106,33 +97,61 @@ void CServer::showCertificates(SSL *ssl){
 
 
 
-void CServer::serveConnection(SSL *ssl){
+void CServer::serveConnection(/*SSL *ssl*/){
+
+    /*
+     * The correct sequence of calls is:
+     * 1.socket
+     * 2.bind
+     * 3.listen
+     * 4.accept
+     * 5.SSL_new
+     * 6.SSL_set_fd
+     * 7.SSL_accept
+     */
 
     char buf[1024];
     char reply[1024];
     int sd, bytes;
     const char* HTMLecho="<html><body><pre>%s</pre></body></html>\n\n";
+    CProtocol *protocol = new CProtocol();
+    m_connections.push_back(new t_connection(protocol,m_connections.size()));
+    initServerCTX(); //initiate p_ctx
 
-    if ( SSL_accept(ssl) == X509_LU_FAIL )     /* do SSL-protocol accept - X509_LU_FAIL */
-        ERR_print_errors_fp(stderr);
-    else
-    {
-        showCertificates(ssl);        /* get any certificates */
-        bytes = SSL_read(ssl, buf, sizeof(buf)); /* get request */
-        if ( bytes > 0 )
-        {
-            buf[bytes] = 0;
-            printf("Client msg: \"%s\"\n", buf);
-            sprintf(reply, HTMLecho, buf);   /* construct reply */
-            SSL_write(ssl, reply, strlen(reply)); /* send reply */
-        }
-        else
-            ERR_print_errors_fp(stderr);
-    }
-    sd = SSL_get_fd(ssl);       /* get socket connection */
-    SSL_free(ssl);         /* release SSL state */
+    handleConnection();
+
+    sd = SSL_get_fd(m_ssl);       /* get socket connection */
+    SSL_free(m_ssl);         /* release SSL state */
     close(sd);          /* close connection */
 }
+
+
+void CServer::handleConnection(){
+
+    /*
+     * client - output from accept function
+     *
+     */
+    //SSL_CTX ctx;
+    m_ssl = SSL_new(p_ctx);
+    SSL_set_fd(m_ssl, n_socket_descriptor);
+    if(SSL_accept(m_ssl) <= 0){
+
+        ERR_print_errors_fp(stderr);
+    }else{
+        /*
+         * Main loop to communicate with with client
+         *
+         * 1. Wait for hello from client
+         * 2. Send ACKN/DENY - connection ok/nok
+         * 3. Wait for command
+         * 4. calculate cr32 of command
+         * 5. Response ACKN/REPT - approved/repeat please (error)
+         * 6. back to po.3
+         */
+    }
+}
+
 
 void * CServer::execute(){
 

@@ -5,22 +5,27 @@ CConnection::CConnection()
 
 }
 
+CConnection::CConnection(CConnection * connection){
+
+    /*this = connection;*/
+    initialize(connection);
+
+}
+
 CConnection::~CConnection(){
 
 }
 
-int CConnection::doAction(){
+void CConnection::initialize(CConnection * con){
 
-    /*
-     * Receive a packet of command (defined structure)
-     * Decode command
-     * Execute command
-     * return status
-     */
-    _command    command;
+    this->n_socket_descriptor = con->n_socket_descriptor;
+    this->m_port_no = con->m_port_no;
+    this->p_s_addr = con->p_s_addr;
+    this->m_ssl = con->m_ssl;
+}
 
-    /* Read command from socket */
+CConnection * CConnection::operator = (CConnection * con){
 
-
-    return 0;
+    initialize(con);
+    return this;
 }

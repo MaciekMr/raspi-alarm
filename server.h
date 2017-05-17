@@ -4,20 +4,18 @@
 #endif // SERVER_H
 
 #include <stdio.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <utility>
 #include <string>
 #include <list>
 #include "connection.h"
-#include "thread_base.h"
+#include "protocol.h"
+//#include "thread_base.h"
 
 using namespace std;
 
-typedef pair<string, int> t_connection;
+typedef pair<CProtocol *, int> t_connection;
 typedef list<t_connection *> t_links;
 
-class CServer:protected CConnection, protected CThreadBase {
+class CServer:protected CConnection {
 
 private:
     char                *p_destination;
@@ -29,11 +27,10 @@ private:
     SSL_CTX             *p_ctx;
     SSL                 *p_ssl;
     int                 server_no;
-
-    int                 n_socket_descriptor;
+    sockaddr_in         *p_s_addr;
     char                *p_cert_file;
     char                *p_key_file;
-
+    t_links             m_connections;
 public:
 
     CServer();
@@ -47,7 +44,8 @@ public:
     void initServerCTX();
     void loadCertificates();
     void showCertificates(SSL *ssl);
-    void serveConnection(SSL *ssl);
+    void serveConnection(/*SSL *ssl*/);
+    void handleConnection();
 
     void *execute();
 };
