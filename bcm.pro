@@ -57,3 +57,6 @@ HEADERS  += mainwindow.h \
     protocol.h
 
 FORMS    += mainwindow.ui
+
+unix: CONFIG += link_pkgconfig
+unix: PKGCONFIG += openssl

@@ -43,7 +43,7 @@ public:
 
     void initServerCTX();
     void loadCertificates();
-    void showCertificates(SSL *ssl);
+    void showCertificates(/*SSL *ssl*/);
     void serveConnection(/*SSL *ssl*/);
     void handleConnection();
 

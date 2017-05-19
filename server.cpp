@@ -1,15 +1,24 @@
 
 #include <string.h>
-
-
-
 #include "server.h"
 
+
+#define cert_path "../bcm/certificates/server2_cert.pem\0"
+#define key_path  "../bcm/certificates/server2.pem\0"
 
 CServer::CServer(){
 
     p_s_addr = NULL;
     p_s_addr = new sockaddr_in;
+
+    p_cert_file = new char [strlen(cert_path) +1 ];
+    p_key_file  = new char [strlen(key_path) +1 ];
+
+    memset(p_cert_file, 0, strlen(cert_path) +1);
+    memset(p_key_file, 0, strlen(key_path) +1);
+
+    memcpy(p_cert_file,cert_path,strlen(cert_path));
+    memcpy(p_key_file,key_path,strlen(key_path));
 }
 
 
@@ -17,6 +26,8 @@ CServer::~CServer(){
 
     if(p_s_addr)
         delete(p_s_addr);
+    delete(p_cert_file);
+    delete(p_key_file);
 }
 
 void CServer::openListener(int port_no){
@@ -74,12 +85,12 @@ void CServer::loadCertificates(){
     }
 }
 
-void CServer::showCertificates(SSL *ssl){
+void CServer::showCertificates(/*SSL *ssl*/){
 
     X509 *cert;
     char *line;
 
-    cert = SSL_get_peer_certificate(ssl); /* Get certificates (if available) */
+    cert = SSL_get_peer_certificate(m_ssl); /* Get certificates (if available) */
     if ( cert != NULL )
     {
         printf("Server certificates:\n");
@@ -109,6 +120,11 @@ void CServer::serveConnection(/*SSL *ssl*/){
      * 6.SSL_set_fd
      * 7.SSL_accept
      */
+    int res = SSL_library_init();
+    this->openListener(3060);
+    this->initServerCTX();  //initiate p_ctx
+    this->loadCertificates();
+
 
     char buf[1024];
     char reply[1024];
@@ -116,7 +132,6 @@ void CServer::serveConnection(/*SSL *ssl*/){
     const char* HTMLecho="<html><body><pre>%s</pre></body></html>\n\n";
     CProtocol *protocol = new CProtocol();
     m_connections.push_back(new t_connection(protocol,m_connections.size()));
-    initServerCTX(); //initiate p_ctx
 
     handleConnection();
 
@@ -135,6 +150,13 @@ void CServer::handleConnection(){
     //SSL_CTX ctx;
     m_ssl = SSL_new(p_ctx);
     SSL_set_fd(m_ssl, n_socket_descriptor);
+    this->showCertificates();
+
+    p_s_client = new client_connection;
+    p_s_client->p_addr_client = new sockaddr;
+
+    accept(n_socket_descriptor, p_s_client->p_addr_client, &p_s_client->size);
+
     if(SSL_accept(m_ssl) <= 0){
 
         ERR_print_errors_fp(stderr);
