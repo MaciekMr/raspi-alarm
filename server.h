@@ -6,7 +6,8 @@
 #include <stdio.h>
 #include <string>
 #include <list>
-#include "connection.h"
+#include <assert.h>
+//#include "connection.h"
 #include "protocol.h"
 //#include "thread_base.h"
 
@@ -24,10 +25,10 @@ private:
     X509                *p_x509_cert;
     X509_NAME           *p_cert_name;
     const SSL_METHOD    *p_method;
-    SSL_CTX             *p_ctx;
-    SSL                 *p_ssl;
+    //SSL_CTX             *p_ctx;
+    //SSL                 *p_ssl;
     int                 server_no;
-    sockaddr_in         *p_s_addr;
+    //sockaddr_in         *p_s_addr;
     char                *p_cert_file;
     char                *p_key_file;
     t_links             m_connections;
@@ -46,6 +47,6 @@ public:
     void showCertificates(/*SSL *ssl*/);
     void serveConnection(/*SSL *ssl*/);
     void handleConnection();
-
+    void doCommunicationWithClient(client_connection *);
     void *execute();
 };

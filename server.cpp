@@ -55,8 +55,8 @@ void CServer::initServerCTX(){
     OpenSSL_add_all_algorithms();  /* load & register all cryptos, etc. */
     SSL_load_error_strings();   /* load all error messages */
     p_method = TLSv1_2_server_method();  /* create new server-method instance */
-    p_ctx = SSL_CTX_new(p_method);   /* create new context from method */
-    if ( p_ctx == NULL )
+    m_p_ctx = SSL_CTX_new(p_method);   /* create new context from method */
+    if ( m_p_ctx == NULL )
     {
         ERR_print_errors_fp(stderr);
         abort();
@@ -66,19 +66,19 @@ void CServer::initServerCTX(){
 void CServer::loadCertificates(){
 
     /* set the local certificate from CertFile */
-    if ( SSL_CTX_use_certificate_file(p_ctx, p_cert_file, SSL_FILETYPE_PEM) <= 0 )
+    if ( SSL_CTX_use_certificate_file(m_p_ctx, p_cert_file, SSL_FILETYPE_PEM) <= 0 )
     {
         ERR_print_errors_fp(stderr);
         abort();
     }
     /* set the private key from KeyFile (may be the same as CertFile) */
-    if ( SSL_CTX_use_PrivateKey_file(p_ctx, p_key_file, SSL_FILETYPE_PEM) <= 0 )
+    if ( SSL_CTX_use_PrivateKey_file(m_p_ctx, p_key_file, SSL_FILETYPE_PEM) <= 0 )
     {
         ERR_print_errors_fp(stderr);
         abort();
     }
     /* verify private key */
-    if ( !SSL_CTX_check_private_key(p_ctx) )
+    if ( !SSL_CTX_check_private_key(m_p_ctx) )
     {
         fprintf(stderr, "Private key does not match the public certificate\n");
         abort();
@@ -90,7 +90,7 @@ void CServer::showCertificates(/*SSL *ssl*/){
     X509 *cert;
     char *line;
 
-    cert = SSL_get_peer_certificate(m_ssl); /* Get certificates (if available) */
+    cert = SSL_get_peer_certificate(m_p_ssl); /* Get certificates (if available) */
     if ( cert != NULL )
     {
         printf("Server certificates:\n");
@@ -128,16 +128,13 @@ void CServer::serveConnection(/*SSL *ssl*/){
 
     char buf[1024];
     char reply[1024];
-    int sd, bytes;
     const char* HTMLecho="<html><body><pre>%s</pre></body></html>\n\n";
     CProtocol *protocol = new CProtocol();
     m_connections.push_back(new t_connection(protocol,m_connections.size()));
 
     handleConnection();
 
-    sd = SSL_get_fd(m_ssl);       /* get socket connection */
-    SSL_free(m_ssl);         /* release SSL state */
-    close(sd);          /* close connection */
+
 }
 
 
@@ -145,33 +142,25 @@ void CServer::handleConnection(){
 
     /*
      * client - output from accept function
-     *
+     * http://simplestcodings.blogspot.com/2010/08/secure-server-client-using-openssl-in-c.html
      */
     //SSL_CTX ctx;
-    m_ssl = SSL_new(p_ctx);
-    SSL_set_fd(m_ssl, n_socket_descriptor);
+    //m_p_ssl = SSL_new(m_p_ctx);
+    //SSL_set_fd(m_ssl, n_socket_descriptor);
     this->showCertificates();
 
-    p_s_client = new client_connection;
-    p_s_client->p_addr_client = new sockaddr;
+    while (1){
+        p_s_client = new client_connection;
+        p_s_client->p_addr_client = new sockaddr;
 
-    accept(n_socket_descriptor, p_s_client->p_addr_client, &p_s_client->size);
+        p_s_client->client_descriptor = accept(n_socket_descriptor, p_s_client->p_addr_client, &p_s_client->size);
 
-    if(SSL_accept(m_ssl) <= 0){
+        doCommunicationWithClient(p_s_client);
 
-        ERR_print_errors_fp(stderr);
-    }else{
-        /*
-         * Main loop to communicate with with client
-         *
-         * 1. Wait for hello from client
-         * 2. Send ACKN/DENY - connection ok/nok
-         * 3. Wait for command
-         * 4. calculate cr32 of command
-         * 5. Response ACKN/REPT - approved/repeat please (error)
-         * 6. back to po.3
-         */
+        delete(p_s_client);
     }
+
+   close(n_socket_descriptor);          /* close connection */
 }
 
 
@@ -182,4 +171,21 @@ void * CServer::execute(){
     //keep thread running until connected
 
     return 0;
+}
+
+
+void CServer::doCommunicationWithClient(client_connection * client){
+
+    /*
+     * Required parameters
+     * SSL *
+     * CTX *
+     * socket descriptor
+     * connection *
+     *
+     */
+
+    SSL * ssl;
+    CProtocol *prot = new CProtocol(client);
+    prot->addNewThread();
 }

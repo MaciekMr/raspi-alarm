@@ -415,10 +415,12 @@ compiler_clean: compiler_moc_header_clean compiler_uic_clean
 ####### Compile
 
 main.o: main.cpp mainwindow.h \
+		server.h \
+		protocol.h \
+		connection.h \
+		thread_base.h \
 		gpio.h \
-		bcm_lib.h \
-		thread.h \
-		thread_base.h
+		bcm_lib.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
 mainwindow.o: mainwindow.cpp mainwindow.h \
@@ -442,8 +444,8 @@ bcm_lib.o: bcm_lib.c bcm_lib.h \
 	$(CC) -c $(CFLAGS) $(INCPATH) -o bcm_lib.o bcm_lib.c
 
 server.o: server.cpp server.h \
-		connection.h \
 		protocol.h \
+		connection.h \
 		thread_base.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o server.o server.cpp
 
@@ -473,6 +475,7 @@ connection.o: connection.cpp connection.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o connection.o connection.cpp
 
 protocol.o: protocol.cpp protocol.h \
+		connection.h \
 		thread_base.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o protocol.o protocol.cpp
 

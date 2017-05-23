@@ -6,7 +6,7 @@
 #include <sys/types.h>
 #include <utility>
 
-
+#include "connection.h"
 #include "thread_base.h"
 
 /*
@@ -36,10 +36,11 @@ struct _command{
     long    field_3;
 };
 
-class CProtocol: protected CThreadBase
+class CProtocol: public CThreadBase, public CConnection
 {
 public:
     CProtocol();
+    CProtocol(client_connection *);
     ~CProtocol();
     int doAction();
     void * execute();

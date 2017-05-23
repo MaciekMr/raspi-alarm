@@ -26,7 +26,7 @@ int CThreadBase::addNewThread(){
     //int pthread_create(pthread_t *restrict tidp, const pthread_attr_t *restrict attr, void *(*start_rtn)(void), void *restrict arg);
     int res = pthread_create(&p_thread, NULL, &CThreadBase::subRoutine, this);
     m_counter++;
-    printf("create t:%d id:%d", res, (int) p_thread);
+    printf("create thread:%d id:%d \n", res, (int) p_thread);
     return res;
 }
 
