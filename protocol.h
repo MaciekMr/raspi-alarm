@@ -5,9 +5,11 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <utility>
+#include <cstring>
+#include <assert.h>
 
 #include "connection.h"
-#include "thread_base.h"
+#include "thread.h"
 
 /*
  * struct sockaddr_in myaddr;
@@ -36,7 +38,7 @@ struct _command{
     long    field_3;
 };
 
-class CProtocol: public CThreadBase, public CConnection
+class CProtocol: public CThread, public CConnection
 {
 public:
     CProtocol();

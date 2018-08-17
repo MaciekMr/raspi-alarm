@@ -18,9 +18,12 @@ void * CThread::execute(){
     int count = 10;
     while (count){
 
-        printf("Thread id = %d print code=%d\n", (int) this->p_thread, count);
+        printf("Thread id = %d print code=%d\n", static_cast<int>(this->p_thread), count);
+/* TODO:
+ * Check if the connection still exist
+ * *********************/
         sleep(1);
         count--;
     }
-    return 0;
+    return nullptr;
 }

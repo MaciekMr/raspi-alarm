@@ -11,6 +11,11 @@ CProtocol::CProtocol(client_connection * con)
 
 }
 
+CProtocol::~CProtocol(){
+
+
+}
+
 int CProtocol::doAction(){
 
     /*
@@ -30,12 +35,15 @@ int CProtocol::doAction(){
 
 void * CProtocol::execute(){
 
-    printf("Protocol running %d!!!\n", this);
+    printf("Protocol running %p!!!\n", dynamic_cast<void *>(this));
     /*TODO:
      * missing CTX context
      */
 
     SSL_CTX * ctx  = getCTX();
+
+    assert (ctx!= nullptr);
+
     setSSL(SSL_new(ctx));
     SSL_set_fd(getSSL(), getClientCon()->client_descriptor);
     if(SSL_accept(getSSL()) <= 0){
@@ -55,11 +63,11 @@ void * CProtocol::execute(){
 
     }
     char txt[] = "Hello :) \n\0";
-    SSL_write(getSSL(), txt, strlen(txt));
+    SSL_write(getSSL(), txt, static_cast<int>(strlen(txt)));
     int sd = SSL_get_fd(getSSL());       /* get socket connection */
     //assert(prot->getClientCon()->client_descriptor!= sd);
     SSL_free(getSSL());  /* release SSL state */
     close(getClientCon()->client_descriptor);
 
-    return 0;
+    return nullptr;
 }

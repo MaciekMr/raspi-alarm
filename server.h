@@ -6,7 +6,9 @@
 #include <stdio.h>
 #include <string>
 #include <list>
+#include <sys/stat.h>
 #include <assert.h>
+#include <iostream>
 //#include "connection.h"
 #include "protocol.h"
 //#include "thread_base.h"
@@ -46,7 +48,7 @@ public:
     void loadCertificates();
     void showCertificates(/*SSL *ssl*/);
     void serveConnection(/*SSL *ssl*/);
-    void handleConnection();
+    [[noreturn]] void handleConnection();
     void doCommunicationWithClient(client_connection *);
     void *execute();
 };

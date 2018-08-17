@@ -8,7 +8,7 @@
 
 CServer::CServer(){
 
-    p_s_addr = NULL;
+    p_s_addr = nullptr;
     p_s_addr = new sockaddr_in;
 
     p_cert_file = new char [strlen(cert_path) +1 ];
@@ -19,6 +19,26 @@ CServer::CServer(){
 
     memcpy(p_cert_file,cert_path,strlen(cert_path));
     memcpy(p_key_file,key_path,strlen(key_path));
+
+    //Check the file existence
+    {
+        int result=0;
+        struct stat buffer;
+        memset(&buffer, 0, sizeof(buffer));
+        result=stat (p_cert_file, &buffer);
+        if( result == -1)
+        {
+            //throw
+            cerr << "No certificate file found: \n" << p_cert_file << endl;
+            exit(22);
+        }
+        result = stat (p_key_file, &buffer);
+        if( result == -1)
+        {
+            cerr << "No key file found: \n" << p_key_file << endl;
+            exit(22);
+        }
+    }
 }
 
 
@@ -36,9 +56,9 @@ void CServer::openListener(int port_no){
     n_socket_descriptor = socket(PF_INET, SOCK_STREAM, 0);
     memset(p_s_addr, 0, sizeof(sockaddr_in));
     p_s_addr->sin_family = AF_INET;
-    p_s_addr->sin_port = htons(m_port_no);
+    p_s_addr->sin_port = htons(static_cast<unsigned short>(m_port_no));
     p_s_addr->sin_addr.s_addr = INADDR_ANY;
-    if ( bind(n_socket_descriptor, (const sockaddr*) p_s_addr, sizeof(sockaddr_in)) != 0 )
+    if ( bind(n_socket_descriptor, reinterpret_cast<const sockaddr*>(p_s_addr), sizeof(sockaddr_in)) != 0 )
     {
         perror("can't bind port");
         abort();
@@ -54,9 +74,9 @@ void CServer::initServerCTX(){
 
     OpenSSL_add_all_algorithms();  /* load & register all cryptos, etc. */
     SSL_load_error_strings();   /* load all error messages */
-    p_method = TLSv1_2_server_method();  /* create new server-method instance */
+    p_method = TLS_server_method();  /* create new server-method instance */
     m_p_ctx = SSL_CTX_new(p_method);   /* create new context from method */
-    if ( m_p_ctx == NULL )
+    if ( m_p_ctx == nullptr )
     {
         ERR_print_errors_fp(stderr);
         abort();
@@ -91,13 +111,13 @@ void CServer::showCertificates(/*SSL *ssl*/){
     char *line;
 
     cert = SSL_get_peer_certificate(m_p_ssl); /* Get certificates (if available) */
-    if ( cert != NULL )
+    if ( cert != nullptr )
     {
         printf("Server certificates:\n");
-        line = X509_NAME_oneline(X509_get_subject_name(cert), 0, 0);
+        line = X509_NAME_oneline(X509_get_subject_name(cert), nullptr, 0);
         printf("Subject: %s\n", line);
         free(line);
-        line = X509_NAME_oneline(X509_get_issuer_name(cert), 0, 0);
+        line = X509_NAME_oneline(X509_get_issuer_name(cert), nullptr, 0);
         printf("Issuer: %s\n", line);
         free(line);
         X509_free(cert);
@@ -121,17 +141,19 @@ void CServer::serveConnection(/*SSL *ssl*/){
      * 7.SSL_accept
      */
     int res = SSL_library_init();
+    assert(res == 1);
     this->openListener(3060);
     this->initServerCTX();  //initiate p_ctx
     this->loadCertificates();
 
-
+    /*
     char buf[1024];
     char reply[1024];
     const char* HTMLecho="<html><body><pre>%s</pre></body></html>\n\n";
+    */
     CProtocol *protocol = new CProtocol();
     m_connections.push_back(new t_connection(protocol,m_connections.size()));
-
+    //printf("Number of living threads=%d", static_cast<int>(m_connections.size()));
     handleConnection();
 
 
@@ -170,7 +192,7 @@ void * CServer::execute(){
     //pass the connection to new thread
     //keep thread running until connected
 
-    return 0;
+    return nullptr;
 }
 
 
@@ -185,7 +207,15 @@ void CServer::doCommunicationWithClient(client_connection * client){
      *
      */
 
-    SSL * ssl;
+    //SSL * ssl;
+
+    /*TODO:
+     *
+     * Do not create every time new object Protocol
+     *
+     * ************************/
     CProtocol *prot = new CProtocol(client);
+    prot->setCTX(m_p_ctx);
     prot->addNewThread();
+    delete(prot);
 }
